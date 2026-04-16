@@ -3,9 +3,9 @@ const { Client } = require("pg");
 const client = new Client({
   host: "slon.felk.cvut.cz",
   port: 5432,
-  database: "hroudmi5",
-  user: "hroudmi5",
-  password: "hroudmi5_DBS26",
+  database: process.env["DB_NAME"],
+  user: process.env["DB_USER"],
+  password: process.env["DB_PASS"],
 });
 
 // --- helpers ---
