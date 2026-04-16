@@ -225,6 +225,11 @@
 = Relační diagram
 
 = ER diagram
+#figure(
+  image("er_model.png", width: 100%),
+  caption: [
+    ER diagram
+  ],
+)
 
 = SQL query dotazy
-

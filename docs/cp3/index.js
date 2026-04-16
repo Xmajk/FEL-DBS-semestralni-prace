@@ -34,34 +34,108 @@ function dateStr(d) {
 
 // --- static data ---
 const jmena = [
-  "Jan", "Petr", "Martin", "Lukas", "Tomas", "Pavel", "Jakub", "David",
-  "Filip", "Ondrej", "Michal", "Vojtech", "Adam", "Matej", "Daniel",
-  "Eva", "Anna", "Katerina", "Lucie", "Tereza", "Petra", "Jana", "Marie",
-  "Barbora", "Veronika", "Marketa", "Klara", "Hana", "Lenka", "Simona",
+  "Jan",
+  "Petr",
+  "Martin",
+  "Lukas",
+  "Tomas",
+  "Pavel",
+  "Jakub",
+  "David",
+  "Filip",
+  "Ondrej",
+  "Michal",
+  "Vojtech",
+  "Adam",
+  "Matej",
+  "Daniel",
+  "Eva",
+  "Anna",
+  "Katerina",
+  "Lucie",
+  "Tereza",
+  "Petra",
+  "Jana",
+  "Marie",
+  "Barbora",
+  "Veronika",
+  "Marketa",
+  "Klara",
+  "Hana",
+  "Lenka",
+  "Simona",
 ];
 const prijmeni = [
-  "Novak", "Svoboda", "Novotny", "Dvorak", "Cerny", "Prochazka", "Kucera",
-  "Vesely", "Horak", "Nemec", "Marek", "Pospisil", "Hajek", "Jelinek",
-  "Kral", "Ruzicka", "Benes", "Fiala", "Sedlacek", "Kolar", "Vlcek",
-  "Kopecky", "Bartos", "Stanek", "Maly", "Blaha", "Zeman", "Urban",
-  "Kratky", "Holub",
+  "Novak",
+  "Svoboda",
+  "Novotny",
+  "Dvorak",
+  "Cerny",
+  "Prochazka",
+  "Kucera",
+  "Vesely",
+  "Horak",
+  "Nemec",
+  "Marek",
+  "Pospisil",
+  "Hajek",
+  "Jelinek",
+  "Kral",
+  "Ruzicka",
+  "Benes",
+  "Fiala",
+  "Sedlacek",
+  "Kolar",
+  "Vlcek",
+  "Kopecky",
+  "Bartos",
+  "Stanek",
+  "Maly",
+  "Blaha",
+  "Zeman",
+  "Urban",
+  "Kratky",
+  "Holub",
 ];
 const ulice = [
-  "Hlavni 1", "Husova 12", "Namesti Miru 3", "Karlova 45", "Sokolska 8",
-  "Masarykova 22", "Palackeho 7", "Jirasekova 15", "Nerudova 30",
-  "Skolni 5", "Na Prikope 10", "Vinohradska 88", "Dejvicka 14",
-  "Seifertova 3", "Jecna 19",
+  "Hlavni 1",
+  "Husova 12",
+  "Namesti Miru 3",
+  "Karlova 45",
+  "Sokolska 8",
+  "Masarykova 22",
+  "Palackeho 7",
+  "Jirasekova 15",
+  "Nerudova 30",
+  "Skolni 5",
+  "Na Prikope 10",
+  "Vinohradska 88",
+  "Dejvicka 14",
+  "Seifertova 3",
+  "Jecna 19",
 ];
 const mesta = ["Praha", "Brno", "Ostrava", "Plzen", "Liberec", "Olomouc"];
 const psc = ["110 00", "602 00", "702 00", "301 00", "460 01", "779 00"];
 const agentury = [
-  "ManpowerGroup", "Hays", "Grafton", "Randstad", "Adecco",
-  "Robert Half", "PageGroup", "Kelly Services",
+  "ManpowerGroup",
+  "Hays",
+  "Grafton",
+  "Randstad",
+  "Adecco",
+  "Robert Half",
+  "PageGroup",
+  "Kelly Services",
 ];
 const typyZaznamu = ["prace", "sluzebni_cesta", "skoleni", "home_office"];
 const roleNaProjektu = [
-  "vyvojar", "tester", "analytik", "projektovy_manazer", "architekt",
-  "scrum_master", "designer", "konzultant",
+  "vyvojar",
+  "tester",
+  "analytik",
+  "projektovy_manazer",
+  "architekt",
+  "scrum_master",
+  "designer",
+  "konzultant",
 ];
 
 async function seed() {
@@ -70,22 +144,40 @@ async function seed() {
 
   // =========== Oddeleni (10) ===========
   const oddeleni = [
-    [1, "ODD-01", "Vyvoj", "Praha - budova A", "Oddeleni vyvoje softwaru", null],
+    [
+      1,
+      "ODD-01",
+      "Vyvoj",
+      "Praha - budova A",
+      "Oddeleni vyvoje softwaru",
+      null,
+    ],
     [2, "ODD-02", "Testovani", "Praha - budova A", "Oddeleni QA", 1],
-    [3, "ODD-03", "Infrastruktura", "Praha - budova B", "Sprava infrastruktury", 1],
+    [
+      3,
+      "ODD-03",
+      "Infrastruktura",
+      "Praha - budova B",
+      "Sprava infrastruktury",
+      1,
+    ],
     [4, "ODD-04", "HR", "Brno - budova C", "Lidske zdroje", null],
     [5, "ODD-05", "Finance", "Brno - budova C", "Financni oddeleni", null],
-    [6, "ODD-06", "Marketing", "Ostrava - budova D", "Marketingove oddeleni", null],
+    [
+      6,
+      "ODD-06",
+      "Marketing",
+      "Ostrava - budova D",
+      "Marketingove oddeleni",
+      null,
+    ],
     [7, "ODD-07", "Podpora", "Praha - budova B", "Zakaznicka podpora", 6],
     [8, "ODD-08", "Obchod", "Plzen - budova E", "Obchodni oddeleni", 6],
     [9, "ODD-09", "Analyza", "Praha - budova A", "Datova analyza", 1],
     [10, "ODD-10", "Vedeni", "Praha - budova A", "Vedeni spolecnosti", null],
   ];
   for (const r of oddeleni) {
-    await client.query(
-      `INSERT INTO "Oddeleni" VALUES ($1,$2,$3,$4,$5,$6)`,
-      r
-    );
+    await client.query(`INSERT INTO "Oddeleni" VALUES ($1,$2,$3,$4,$5,$6)`, r);
   }
   console.log("Oddeleni: 10");
 
@@ -110,13 +202,25 @@ async function seed() {
   // =========== Projekt (15) ===========
   const projekty = [
     [1, "ERP System", "2024-01-15", "2025-06-30", "Implementace ERP"],
-    [2, "Mobilni aplikace", "2024-03-01", "2024-12-31", "iOS a Android aplikace"],
+    [
+      2,
+      "Mobilni aplikace",
+      "2024-03-01",
+      "2024-12-31",
+      "iOS a Android aplikace",
+    ],
     [3, "Migrace do cloudu", "2024-06-01", "2025-03-31", "AWS migrace"],
     [4, "Datovy sklad", "2024-02-01", "2024-11-30", "BI a reporting"],
     [5, "Web portal", "2023-09-01", "2024-08-31", "Zakaznicky portal"],
     [6, "API Gateway", "2024-04-15", "2025-01-31", "Centralni API brana"],
     [7, "Security audit", "2024-07-01", "2024-09-30", "Bezpecnostni audit"],
-    [8, "CI/CD Pipeline", "2024-05-01", "2024-10-31", "Automatizace deploymentu"],
+    [
+      8,
+      "CI/CD Pipeline",
+      "2024-05-01",
+      "2024-10-31",
+      "Automatizace deploymentu",
+    ],
     [9, "CRM System", "2024-08-01", "2025-08-31", "Rizeni vztahu se zakazniky"],
     [10, "Chatbot", "2024-10-01", null, "AI chatbot pro zakazniky"],
     [11, "Monitoring", "2024-01-01", "2024-06-30", "Systemovy monitoring"],
@@ -148,7 +252,7 @@ async function seed() {
     zamOddeleni.push(idOdd);
     await client.query(
       `INSERT INTO "Zamestnanec" VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-      [i, genRodneCislo(i), email, j, p, datum, idOdd, idPoz]
+      [i, genRodneCislo(i), email, j, p, datum, idOdd, idPoz],
     );
   }
   console.log("Zamestnanec: 50");
@@ -268,7 +372,7 @@ async function seed() {
     }
     await client.query(
       `INSERT INTO "ZaznamDochazky" ("id_dochazka","cas_prichodu","cas_odchodu","typ_zaznamu","id_zamestnanec") VALUES ${values.join(",")}`,
-      params
+      params,
     );
     if ((i / BATCH) % 5 === 0) {
       process.stdout.write(`  ${i + batch.length} / 35000\r`);
