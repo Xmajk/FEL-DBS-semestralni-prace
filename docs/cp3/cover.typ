@@ -26,7 +26,7 @@
   set page(
     paper: "a4",
     margin: (x: 2.5cm, y: 2.5cm),
-    numbering: "1",
+    numbering: none,
   )
   set text(font: "New Computer Modern", size: 11pt, lang: "cs")
   set par(justify: true, leading: 0.7em)

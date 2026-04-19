@@ -1,10 +1,10 @@
 #import "cover.typ": semestralka
 
 #show: semestralka.with(
-  title: "CP3 - DBS - Vytvoření databáze",
+  title: "CP3 - DBS - Vytvoření databáze a SQL dotazy",
   author: "Michal Hrouda a Lukáš Hrubec",
   version: "v1.0",
-  date: "16. 4. 2026",
+  date: "19. 4. 2026",
   logo: image("./logo_CVUT.jpg"),
 )
 
@@ -222,7 +222,13 @@
   ```,
 )
 
-= Relační diagram
+= Relační model
+#figure(
+  image("./relationa_model.png", width: 100%),
+  caption: [
+    Relační model
+  ],
+)
 
 = ER diagram
 #figure(
@@ -233,3 +239,170 @@
 )
 
 = SQL query dotazy
+
+== Dotaz 1
+
+Vypsání údajů o zaměstnancích a názvu jejich oddělení pro zaměstnance, kteří
+nastoupili po 1. 1. 2023. Dotaz demonstruje vnitřní spojení tabulek
+(`INNER JOIN`) a podmínku na data (`WHERE` s datovým typem `DATE`).
+
+#sql(
+  caption: none,
+  breakable: false,
+  ```sql
+  SELECT z.jmeno, z.prijmeni, z.email, o.nazev AS oddeleni, z.datum_nastupu
+  FROM "Zamestnanec" z
+  INNER JOIN "Oddeleni" o ON z.id_oddeleni = o.id_oddeleni
+  WHERE z.datum_nastupu > DATE '2023-01-01'
+  ORDER BY z.datum_nastupu;
+  ```,
+)
+#figure(
+  image("query1.png", width: 100%),
+  caption: none,
+)
+
+== Dotaz 2
+
+Vypsání všech zaměstnanců včetně těch, kteří nemají přiřazenou pozici.
+Dotaz demonstruje vnější spojení tabulek (`LEFT OUTER JOIN`) – u zaměstnanců
+bez přiřazené pozice je ve sloupcích `pozice` a `uroven` hodnota `NULL`.
+
+#sql(
+  caption: none,
+  breakable: false,
+  ```sql
+  SELECT z.id_zamestnanec, z.jmeno, z.prijmeni, p.nazev AS pozice, p.uroven
+  FROM "Zamestnanec" z
+  LEFT OUTER JOIN "Pozice" p ON z.id_pozice = p.id_pozice
+  ORDER BY z.prijmeni, z.jmeno;
+  ```,
+)
+#figure(
+  image("query2.png", width: 100%),
+  caption: none,
+)
+
+== Dotaz 3
+
+Vypsání oddělení a počtu jejich zaměstnanců, kde je počet zaměstnanců
+vyšší než 2. Dotaz demonstruje agregaci (`COUNT`, `GROUP BY`) a podmínku
+na hodnotu agregační funkce pomocí klauzule `HAVING`.
+
+#sql(
+  caption: none,
+  breakable: false,
+  ```sql
+  SELECT o.nazev AS oddeleni, o.lokace, COUNT(z.id_zamestnanec) AS pocet_zamestnancu
+  FROM "Oddeleni" o
+  INNER JOIN "Zamestnanec" z ON o.id_oddeleni = z.id_oddeleni
+  GROUP BY o.id_oddeleni, o.nazev, o.lokace
+  HAVING COUNT(z.id_zamestnanec) > 2
+  ORDER BY pocet_zamestnancu DESC;
+  ```,
+)
+#figure(
+  image("query3.png", width: 100%),
+  caption: none,
+)
+
+== Dotaz 4
+
+Vypsání druhé stránky seznamu zaměstnanců (záznamy 6–10) seřazených podle
+příjmení a jména vzestupně. Dotaz demonstruje řazení (`ORDER BY`) a
+stránkování pomocí klauzulí `LIMIT` a `OFFSET`.
+
+#sql(
+  caption: none,
+  breakable: false,
+  ```sql
+  SELECT id_zamestnanec, jmeno, prijmeni, email, datum_nastupu
+  FROM "Zamestnanec"
+  ORDER BY prijmeni ASC, jmeno ASC
+  LIMIT 5 OFFSET 5;
+  ```,
+)
+#figure(
+  image("query4.png", width: 100%),
+  caption: none,
+)
+
+== Dotaz 5
+
+Výpis manažerů a externistů
+
+#sql(
+  caption: none,
+  breakable: false,
+  ```sql
+  SELECT z.id_zamestnanec, z.jmeno, z.prijmeni, 'Manažer' AS typ
+  FROM "Zamestnanec" z
+  INNER JOIN "Manazer" m ON z.id_zamestnanec = m.id_zamestnanec
+  UNION
+  SELECT z.id_zamestnanec, z.jmeno, z.prijmeni, 'Externista' AS typ
+  FROM "Zamestnanec" z
+  INNER JOIN "Externista" e ON z.id_zamestnanec = e.id_zamestnanec
+  ORDER BY prijmeni, jmeno;
+
+  ```,
+)
+#figure(
+  image("query5.png", width: 100%),
+  caption: none,
+)
+
+== Dotaz 6
+
+Výpis zaměstnanců, kteří se zůčastnili více než průměrného počtu projektů
+
+#sql(
+  caption: none,
+  breakable: false,
+  ```sql
+  SELECT z.id_zamestnanec, z.jmeno, z.prijmeni,
+         (SELECT COUNT(*)
+          FROM "UcastniSe" u
+          WHERE u.id_zamestnanec = z.id_zamestnanec) AS pocet_projektu
+  FROM "Zamestnanec" z
+  WHERE (SELECT COUNT(*)
+         FROM "UcastniSe" u
+         WHERE u.id_zamestnanec = z.id_zamestnanec) > (
+      SELECT AVG(pocet)
+      FROM (
+          SELECT COUNT(*) AS pocet
+          FROM "UcastniSe"
+          GROUP BY id_zamestnanec
+      ) AS prumer
+  )
+  ORDER BY pocet_projektu DESC;
+  ```,
+)
+#figure(
+  image("query6.png", width: 100%),
+  caption: none,
+)
+
+== Dotaz 7
+
+Udělení práv
+
+#sql(
+  caption: none,
+  breakable: false,
+  ```sql
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "Oddeleni"       TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "Pozice"         TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "Projekt"        TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "Zamestnanec"    TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "Telefon"        TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "Adresa"         TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "Manazer"        TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "Externista"     TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "ZaznamDochazky" TO hrubeluk;
+  GRANT SELECT, INSERT, UPDATE, DELETE ON "UcastniSe"      TO hrubeluk;
+  ```,
+)
+#figure(
+  image("query7.png", width: 100%),
+  caption: none,
+)
