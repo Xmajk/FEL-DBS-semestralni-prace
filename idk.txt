@@ -1,0 +1,15 @@
+❯ udělej revizi @src/ , podklady máš v @docs/ , hlavní je aby aplikace demonstrovala užití aplikace, tak aby tam byla transakce a view z @docs/cp4/ , parametrizovaný dotaz, a create, update,selecct a delete, ne nutně na vše ale musí
+  tam být nějak obsaženo, dále M.N reprezentace vazby, a také zadání: Na databází CP-3 vystavte základ javové aplikace využívající JPA, který obsahuje zejména
+
+      datový model odpovídající celé databázi zahrnující
+          Many To Many vazbu
+          dědičnost
+      DAO vrstva zajišťující nutný nízkoúrovňový přístup k datům včetně parametrizovaného dotazu
+      Servisní vrstva volající DAO vrstvu obsahující 5 vybraných užití vašich dat, specializovaný zejména na zapisovací operace a pokrývající transakci z CP-4.
+      Odevzdává se formou odevzdání relevantní části JAVA projektu, běh aplikace v rámci odevzdání je nutné předvést cvičícímu.
+  , potom projdi apliakci a důležité bloky a funkcionalitu napiš do @docs/cp4/report.typ v typst formátu, dále tam dej i kde jsou realizovány dané parametry, dále dávej pozor aby aplikace splnovala:
+  Je třeba se podívat na kód. Vaše dotazy by měly mimo jiné demonstrovat
+  1) dědičnost, 2) vztah N:M, 3) transakci z CP-4. A to nejen dotazy na
+  čtení, ale i na vkládání, změnu a mazání dat.
+  Vaše aplikace je vhodná, pokud se mezi dotazy nachází něco z toho, co
+  jsem uvedla.

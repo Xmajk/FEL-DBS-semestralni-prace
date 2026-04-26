@@ -1,0 +1,17 @@
+TRANSAKCE
+Tato transakce řeší proces bezpečné výměny manažera v konkrétním oddělení. Operace zahrnuje odstranění stávajícího záznamu o manažerovi a okamžité jmenování nového zaměstnance do této role. Využíváme úroveň izolace SERIALIZABLE.
+Konflikt: Pokud by dva administrátoři prováděli výměnu manažera ve stejném oddělení současně bez použití transakce, mohlo by dojít k situaci, kdy by se systém snažil vložit dva záznamy se stejným id_oddeleni, což by vyvolalo chybu.
+
+VIEW
+Pohled v_kontaktni_seznam_manazeru slouží jako virtuální tabulka, která v reálném čase agreguje data z tabulek "Oddeleni", "Manazer", "Zamestnanec" a "Telefon".
+Uživatel (např. recepční nebo ředitel) nemusí zadávat složité dozazy. Stačí mu zavolat jeden jednoduchý dotaz nad tímto pohledem.
+Pohled neobsahuje citlivé údaje jako rodná čísla nebo data nástupu, které jsou uloženy v tabulce "Zamestnanec", čímž napomáhá dodržování zásad GDPR.
+
+TRIGGER
+Pro zajištění konzistence dat v modulu docházky jsme navrhli trigger trg_kontrola_dochazky. Tento spouštěč se aktivuje automaticky před každým vložením (BEFORE INSERT) nového řádku do tabulky "ZaznamDochazky".
+Jeho úkolem je zkontrolovat, zda se zaměstnanec nesnaží přihlásit (zadat nový čas příchodu) v situaci, kdy ještě neuzavřel svůj předchozí záznam (tzn. v databázi existuje jeho předchozí záznam, kde je cas_odchodu roven NULL). Pokud takový neuzavřený záznam existuje, trigger vložení zablokuje a vyhodí chybovou hlášku. Zabráníme tím vzniku překrývajících se a nelogických docházkových bloků.
+
+INDEX
+V systému pro evidenci docházky je nejčastější operací vyhledávání historie záznamů pro jednoho konkrétního zaměstnance (např. při měsíčním zpracování mezd nebo kontrole absencí).
+Před vytvořením indexu: Pokud personalista hledá docházku zaměstnance (např. s ID 5), databáze musí provést tzv. Sequential Scan. To znamená, že musí vzít tabulku, která může mít statisíce záznamů, a projít ji celou řádek po řádku, aby našla ty správné dny. S přibývajícími roky historie by se tento dotaz neustále zpomaloval.
+Po vytvoření indexu: Díky indexu si databáze vytvoří logický stromový rejstřík. Při spuštění stejného dotazu plánovač použije Index Scan. Databáze přesně ví, na kterém místě na disku leží záznamy daného zaměstnance, a sáhne přímo pro ně. Čas spuštění (Execution Time) klesne z desítek či stovek milisekund na zlomky milisekundy, a to bez ohledu na to, jak moc tabulka v budoucnu naroste.

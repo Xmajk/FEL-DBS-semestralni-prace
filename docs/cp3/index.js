@@ -8,7 +8,6 @@ const client = new Client({
   password: process.env["DB_PASS"],
 });
 
-// --- helpers ---
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -32,110 +31,33 @@ function dateStr(d) {
   return d.toISOString().slice(0, 10);
 }
 
-// --- static data ---
 const jmena = [
-  "Jan",
-  "Petr",
-  "Martin",
-  "Lukas",
-  "Tomas",
-  "Pavel",
-  "Jakub",
-  "David",
-  "Filip",
-  "Ondrej",
-  "Michal",
-  "Vojtech",
-  "Adam",
-  "Matej",
-  "Daniel",
-  "Eva",
-  "Anna",
-  "Katerina",
-  "Lucie",
-  "Tereza",
-  "Petra",
-  "Jana",
-  "Marie",
-  "Barbora",
-  "Veronika",
-  "Marketa",
-  "Klara",
-  "Hana",
-  "Lenka",
-  "Simona",
+  "Jan", "Petr", "Martin", "Lukas", "Tomas", "Pavel", "Jakub", "David",
+  "Filip", "Ondrej", "Michal", "Vojtech", "Adam", "Matej", "Daniel",
+  "Eva", "Anna", "Katerina", "Lucie", "Tereza", "Petra", "Jana",
+  "Marie", "Barbora", "Veronika", "Marketa", "Klara", "Hana", "Lenka", "Simona",
 ];
 const prijmeni = [
-  "Novak",
-  "Svoboda",
-  "Novotny",
-  "Dvorak",
-  "Cerny",
-  "Prochazka",
-  "Kucera",
-  "Vesely",
-  "Horak",
-  "Nemec",
-  "Marek",
-  "Pospisil",
-  "Hajek",
-  "Jelinek",
-  "Kral",
-  "Ruzicka",
-  "Benes",
-  "Fiala",
-  "Sedlacek",
-  "Kolar",
-  "Vlcek",
-  "Kopecky",
-  "Bartos",
-  "Stanek",
-  "Maly",
-  "Blaha",
-  "Zeman",
-  "Urban",
-  "Kratky",
-  "Holub",
+  "Novak", "Svoboda", "Novotny", "Dvorak", "Cerny", "Prochazka", "Kucera",
+  "Vesely", "Horak", "Nemec", "Marek", "Pospisil", "Hajek", "Jelinek",
+  "Kral", "Ruzicka", "Benes", "Fiala", "Sedlacek", "Kolar", "Vlcek",
+  "Kopecky", "Bartos", "Stanek", "Maly", "Blaha", "Zeman", "Urban", "Kratky", "Holub",
 ];
 const ulice = [
-  "Hlavni 1",
-  "Husova 12",
-  "Namesti Miru 3",
-  "Karlova 45",
-  "Sokolska 8",
-  "Masarykova 22",
-  "Palackeho 7",
-  "Jirasekova 15",
-  "Nerudova 30",
-  "Skolni 5",
-  "Na Prikope 10",
-  "Vinohradska 88",
-  "Dejvicka 14",
-  "Seifertova 3",
-  "Jecna 19",
+  "Hlavni 1", "Husova 12", "Namesti Miru 3", "Karlova 45", "Sokolska 8",
+  "Masarykova 22", "Palackeho 7", "Jirasekova 15", "Nerudova 30", "Skolni 5",
+  "Na Prikope 10", "Vinohradska 88", "Dejvicka 14", "Seifertova 3", "Jecna 19",
 ];
 const mesta = ["Praha", "Brno", "Ostrava", "Plzen", "Liberec", "Olomouc"];
-const psc = ["110 00", "602 00", "702 00", "301 00", "460 01", "779 00"];
+const psc   = ["110 00", "602 00", "702 00", "301 00", "460 01", "779 00"];
 const agentury = [
-  "ManpowerGroup",
-  "Hays",
-  "Grafton",
-  "Randstad",
-  "Adecco",
-  "Robert Half",
-  "PageGroup",
-  "Kelly Services",
+  "ManpowerGroup", "Hays", "Grafton", "Randstad",
+  "Adecco", "Robert Half", "PageGroup", "Kelly Services",
 ];
-const typyZaznamu = ["prace", "sluzebni_cesta", "skoleni", "home_office"];
+const typyZaznamu   = ["prace", "sluzebni_cesta", "skoleni", "home_office"];
 const roleNaProjektu = [
-  "vyvojar",
-  "tester",
-  "analytik",
-  "projektovy_manazer",
-  "architekt",
-  "scrum_master",
-  "designer",
-  "konzultant",
+  "vyvojar", "tester", "analytik", "projektovy_manazer",
+  "architekt", "scrum_master", "designer", "konzultant",
 ];
 
 async function seed() {
@@ -143,240 +65,204 @@ async function seed() {
   console.log("Connected.");
 
   // =========== Oddeleni (10) ===========
-  const oddeleni = [
-    [
-      1,
-      "ODD-01",
-      "Vyvoj",
-      "Praha - budova A",
-      "Oddeleni vyvoje softwaru",
-      null,
-    ],
-    [2, "ODD-02", "Testovani", "Praha - budova A", "Oddeleni QA", 1],
-    [
-      3,
-      "ODD-03",
-      "Infrastruktura",
-      "Praha - budova B",
-      "Sprava infrastruktury",
-      1,
-    ],
-    [4, "ODD-04", "HR", "Brno - budova C", "Lidske zdroje", null],
-    [5, "ODD-05", "Finance", "Brno - budova C", "Financni oddeleni", null],
-    [
-      6,
-      "ODD-06",
-      "Marketing",
-      "Ostrava - budova D",
-      "Marketingove oddeleni",
-      null,
-    ],
-    [7, "ODD-07", "Podpora", "Praha - budova B", "Zakaznicka podpora", 6],
-    [8, "ODD-08", "Obchod", "Plzen - budova E", "Obchodni oddeleni", 6],
-    [9, "ODD-09", "Analyza", "Praha - budova A", "Datova analyza", 1],
-    [10, "ODD-10", "Vedeni", "Praha - budova A", "Vedeni spolecnosti", null],
+  // Definice ve správném pořadí – rodiče vždy před dětmi.
+  // parent je cislo_oddeleni rodiče (string), null = žádný nadřízený.
+  const oddeleniDef = [
+    { cislo: "ODD-01", nazev: "Vyvoj",          lokace: "Praha - budova A", popis: "Oddeleni vyvoje softwaru", parent: null     },
+    { cislo: "ODD-04", nazev: "HR",              lokace: "Brno - budova C",  popis: "Lidske zdroje",            parent: null     },
+    { cislo: "ODD-05", nazev: "Finance",         lokace: "Brno - budova C",  popis: "Financni oddeleni",        parent: null     },
+    { cislo: "ODD-06", nazev: "Marketing",       lokace: "Ostrava - budova D", popis: "Marketingove oddeleni",  parent: null     },
+    { cislo: "ODD-10", nazev: "Vedeni",          lokace: "Praha - budova A", popis: "Vedeni spolecnosti",       parent: null     },
+    { cislo: "ODD-02", nazev: "Testovani",       lokace: "Praha - budova A", popis: "Oddeleni QA",              parent: "ODD-01" },
+    { cislo: "ODD-03", nazev: "Infrastruktura",  lokace: "Praha - budova B", popis: "Sprava infrastruktury",    parent: "ODD-01" },
+    { cislo: "ODD-09", nazev: "Analyza",         lokace: "Praha - budova A", popis: "Datova analyza",           parent: "ODD-01" },
+    { cislo: "ODD-07", nazev: "Podpora",         lokace: "Praha - budova B", popis: "Zakaznicka podpora",       parent: "ODD-06" },
+    { cislo: "ODD-08", nazev: "Obchod",          lokace: "Plzen - budova E", popis: "Obchodni oddeleni",        parent: "ODD-06" },
   ];
-  for (const r of oddeleni) {
-    await client.query(`INSERT INTO "Oddeleni" VALUES ($1,$2,$3,$4,$5,$6)`, r);
+
+  const cisloToId = {};
+  for (const def of oddeleniDef) {
+    const parentId = def.parent ? cisloToId[def.parent] : null;
+    const res = await client.query(
+      `INSERT INTO "Oddeleni" ("cislo_oddeleni","nazev","lokace","popis","id_nadrizene_oddeleni")
+       VALUES ($1,$2,$3,$4,$5) RETURNING "id_oddeleni"`,
+      [def.cislo, def.nazev, def.lokace, def.popis, parentId]
+    );
+    cisloToId[def.cislo] = res.rows[0].id_oddeleni;
   }
+  const oddeleniIds = Object.values(cisloToId);
   console.log("Oddeleni: 10");
 
   // =========== Pozice (10) ===========
-  const pozice = [
-    [1, "Junior vyvojar", 2, "Zacinajici vyvojar"],
-    [2, "Senior vyvojar", 5, "Zkuseny vyvojar"],
-    [3, "Team leader", 6, "Vedouci tymu"],
-    [4, "Tester", 3, "QA specialista"],
-    [5, "Analytik", 4, "Business analytik"],
-    [6, "Projektovy manazer", 7, "Rizeni projektu"],
-    [7, "DevOps inzenyr", 5, "Sprava CI/CD a infrastruktury"],
-    [8, "UX designer", 4, "Navrh uzivatelskeho rozhrani"],
-    [9, "Databazovy specialista", 5, "Sprava databazi"],
-    [10, "Reditel", 10, "Vedeni spolecnosti"],
+  const poziceData = [
+    ["Junior vyvojar",        2,  "Zacinajici vyvojar"],
+    ["Senior vyvojar",        5,  "Zkuseny vyvojar"],
+    ["Team leader",           6,  "Vedouci tymu"],
+    ["Tester",                3,  "QA specialista"],
+    ["Analytik",              4,  "Business analytik"],
+    ["Projektovy manazer",    7,  "Rizeni projektu"],
+    ["DevOps inzenyr",        5,  "Sprava CI/CD a infrastruktury"],
+    ["UX designer",           4,  "Navrh uzivatelskeho rozhrani"],
+    ["Databazovy specialista",5,  "Sprava databazi"],
+    ["Reditel",               10, "Vedeni spolecnosti"],
   ];
-  for (const r of pozice) {
-    await client.query(`INSERT INTO "Pozice" VALUES ($1,$2,$3,$4)`, r);
+  const poziceIds = [];
+  for (const row of poziceData) {
+    const res = await client.query(
+      `INSERT INTO "Pozice" ("nazev","uroven","popis") VALUES ($1,$2,$3) RETURNING "id_pozice"`,
+      row
+    );
+    poziceIds.push(res.rows[0].id_pozice);
   }
   console.log("Pozice: 10");
 
   // =========== Projekt (15) ===========
-  const projekty = [
-    [1, "ERP System", "2024-01-15", "2025-06-30", "Implementace ERP"],
-    [
-      2,
-      "Mobilni aplikace",
-      "2024-03-01",
-      "2024-12-31",
-      "iOS a Android aplikace",
-    ],
-    [3, "Migrace do cloudu", "2024-06-01", "2025-03-31", "AWS migrace"],
-    [4, "Datovy sklad", "2024-02-01", "2024-11-30", "BI a reporting"],
-    [5, "Web portal", "2023-09-01", "2024-08-31", "Zakaznicky portal"],
-    [6, "API Gateway", "2024-04-15", "2025-01-31", "Centralni API brana"],
-    [7, "Security audit", "2024-07-01", "2024-09-30", "Bezpecnostni audit"],
-    [
-      8,
-      "CI/CD Pipeline",
-      "2024-05-01",
-      "2024-10-31",
-      "Automatizace deploymentu",
-    ],
-    [9, "CRM System", "2024-08-01", "2025-08-31", "Rizeni vztahu se zakazniky"],
-    [10, "Chatbot", "2024-10-01", null, "AI chatbot pro zakazniky"],
-    [11, "Monitoring", "2024-01-01", "2024-06-30", "Systemovy monitoring"],
-    [12, "GDPR Compliance", "2024-03-15", "2024-12-15", "Soulad s GDPR"],
-    [13, "Intranet", "2024-09-01", "2025-04-30", "Firemni intranet"],
-    [14, "ML Predikce", "2025-01-01", null, "Strojove uceni pro predikce"],
-    [15, "Platebni brana", "2024-11-01", "2025-07-31", "Online platby"],
+  const projektyData = [
+    ["ERP System",       "2024-01-15", "2025-06-30", "Implementace ERP"],
+    ["Mobilni aplikace", "2024-03-01", "2024-12-31", "iOS a Android aplikace"],
+    ["Migrace do cloudu","2024-06-01", "2025-03-31", "AWS migrace"],
+    ["Datovy sklad",     "2024-02-01", "2024-11-30", "BI a reporting"],
+    ["Web portal",       "2023-09-01", "2024-08-31", "Zakaznicky portal"],
+    ["API Gateway",      "2024-04-15", "2025-01-31", "Centralni API brana"],
+    ["Security audit",   "2024-07-01", "2024-09-30", "Bezpecnostni audit"],
+    ["CI/CD Pipeline",   "2024-05-01", "2024-10-31", "Automatizace deploymentu"],
+    ["CRM System",       "2024-08-01", "2025-08-31", "Rizeni vztahu se zakazniky"],
+    ["Chatbot",          "2024-10-01", null,          "AI chatbot pro zakazniky"],
+    ["Monitoring",       "2024-01-01", "2024-06-30", "Systemovy monitoring"],
+    ["GDPR Compliance",  "2024-03-15", "2024-12-15", "Soulad s GDPR"],
+    ["Intranet",         "2024-09-01", "2025-04-30", "Firemni intranet"],
+    ["ML Predikce",      "2025-01-01", null,          "Strojove uceni pro predikce"],
+    ["Platebni brana",   "2024-11-01", "2025-07-31", "Online platby"],
   ];
-  for (const r of projekty) {
-    await client.query(`INSERT INTO "Projekt" VALUES ($1,$2,$3,$4,$5)`, r);
+  const projektyIds = [];
+  for (const row of projektyData) {
+    const res = await client.query(
+      `INSERT INTO "Projekt" ("nazev","termin_zahajeni","termin_ukonceni","popis") VALUES ($1,$2,$3,$4) RETURNING "id_projekt"`,
+      row
+    );
+    projektyIds.push(res.rows[0].id_projekt);
   }
   console.log("Projekt: 15");
 
   // =========== Zamestnanec (50) ===========
-  const zamIds = [];
-  const zamOddeleni = [];
-  for (let i = 1; i <= 50; i++) {
-    const j = pick(jmena);
-    const p = pick(prijmeni);
-    const idOdd = randInt(1, 10);
-    const idPoz = Math.random() < 0.9 ? randInt(1, 10) : null;
-    const rok = randInt(2015, 2024);
-    const mesic = pad(randInt(1, 12));
-    const den = pad(randInt(1, 28));
-    const datum = `${rok}-${mesic}-${den}`;
-    const email = `${j.toLowerCase()}.${p.toLowerCase()}${i}@firma.cz`;
+  // Prvních 10 zaměstnanců dostane každý jiné oddělení (1:1 s oddeleniIds),
+  // aby FK v Manazer mohl odkazovat na (id_zamestnanec, id_oddeleni).
+  const zamIds    = [];
+  const zamOddIds = [];
 
-    zamIds.push(i);
-    zamOddeleni.push(idOdd);
-    await client.query(
-      `INSERT INTO "Zamestnanec" VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-      [i, genRodneCislo(i), email, j, p, datum, idOdd, idPoz],
+  for (let i = 0; i < 50; i++) {
+    const j     = pick(jmena);
+    const p     = pick(prijmeni);
+    const idOdd = i < 10 ? oddeleniIds[i] : pick(oddeleniIds);
+    const idPoz = Math.random() < 0.9 ? pick(poziceIds) : null;
+    const rok   = randInt(2015, 2024);
+    const datum = `${rok}-${pad(randInt(1, 12))}-${pad(randInt(1, 28))}`;
+    const email = `${j.toLowerCase()}.${p.toLowerCase()}${i + 1}@firma.cz`;
+
+    const res = await client.query(
+      `INSERT INTO "Zamestnanec" ("rodne_cislo","email","jmeno","prijmeni","datum_nastupu","id_oddeleni","id_pozice")
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id_zamestnanec"`,
+      [genRodneCislo(i + 1), email, j, p, datum, idOdd, idPoz]
     );
+    zamIds.push(res.rows[0].id_zamestnanec);
+    zamOddIds.push(idOdd);
   }
   console.log("Zamestnanec: 50");
 
   // =========== Telefon (50) ===========
-  for (let i = 1; i <= 50; i++) {
-    await client.query(`INSERT INTO "Telefon" VALUES ($1,$2,$3)`, [
-      i,
-      genPhone(),
-      zamIds[i - 1],
-    ]);
+  for (const zamId of zamIds) {
+    await client.query(
+      `INSERT INTO "Telefon" ("telefon","id_zamestnanec") VALUES ($1,$2)`,
+      [genPhone(), zamId]
+    );
   }
   console.log("Telefon: 50");
 
   // =========== Adresa (50) ===========
-  for (let i = 1; i <= 50; i++) {
+  for (const zamId of zamIds) {
     const mi = randInt(0, mesta.length - 1);
-    await client.query(`INSERT INTO "Adresa" VALUES ($1,$2,$3,$4,$5)`, [
-      i,
-      pick(ulice),
-      mesta[mi],
-      psc[mi],
-      zamIds[i - 1],
-    ]);
+    await client.query(
+      `INSERT INTO "Adresa" ("ulice","mesto","psc","id_zamestnanec") VALUES ($1,$2,$3,$4)`,
+      [pick(ulice), mesta[mi], psc[mi], zamId]
+    );
   }
   console.log("Adresa: 50");
 
   // =========== Manazer (10) ===========
-  const manazerIds = zamIds.slice(0, 10);
+  // Prvních 10 zaměstnanců je každý v jiném oddělení (garantováno výše),
+  // takže (zamIds[i], zamOddIds[i]) je platná dvojice z Zamestnanec.
   for (let i = 0; i < 10; i++) {
-    await client.query(`INSERT INTO "Manazer" VALUES ($1,$2,$3,$4)`, [
-      i + 1,
-      randInt(1, 5),
-      manazerIds[i],
-      zamOddeleni[i],
-    ]);
+    await client.query(
+      `INSERT INTO "Manazer" ("uroven_pravomoci","id_zamestnanec","id_oddeleni") VALUES ($1,$2,$3)`,
+      [randInt(1, 5), zamIds[i], zamOddIds[i]]
+    );
   }
   console.log("Manazer: 10");
 
   // =========== Externista (10) ===========
-  const extIds = zamIds.slice(40, 50);
-  for (let i = 0; i < 10; i++) {
+  // Zaměstnanci 40-49 nejsou manažeři (manažeři jsou 0-9).
+  for (let i = 40; i < 50; i++) {
     const konec = `2025-${pad(randInt(1, 12))}-${pad(randInt(1, 28))}`;
-    await client.query(`INSERT INTO "Externista" VALUES ($1,$2,$3,$4)`, [
-      i + 1,
-      pick(agentury),
-      konec,
-      extIds[i],
-    ]);
+    await client.query(
+      `INSERT INTO "Externista" ("nazev_agentury","konec_smlouvy","id_zamestnanec") VALUES ($1,$2,$3)`,
+      [pick(agentury), konec, zamIds[i]]
+    );
   }
   console.log("Externista: 10");
 
   // =========== ZaznamDochazky (35 000) ===========
   console.log("ZaznamDochazky: generating 35000 rows (batch insert)...");
 
-  const BATCH = 1000;
-  let dochId = 1;
-
-  // Pre-generate unique (cas_prichodu, id_zamestnanec) pairs.
-  // 50 employees x 700 working days (2022-01-03 .. 2024-11-28) = 35000
+  const BATCH     = 1000;
   const startDate = new Date("2022-01-03");
-  const rows = [];
+  const rows      = [];
 
-  for (let emp = 1; emp <= 50; emp++) {
+  for (let emp = 0; emp < zamIds.length; emp++) {
     for (let d = 0; d < 700; d++) {
+      if (rows.length >= 35000) break;
       const day = new Date(startDate);
       day.setDate(day.getDate() + d);
-      // skip weekends
       const dow = day.getDay();
       if (dow === 0 || dow === 6) continue;
-      if (rows.length >= 35000) break;
 
-      const hh = randInt(6, 9);
-      const mm = randInt(0, 59);
-      const ss = randInt(0, 59);
-      const prichod = `${dateStr(day)} ${pad(hh)}:${pad(mm)}:${pad(ss)}`;
-      const odchodHH = hh + randInt(8, 10);
-      const odchod =
-        Math.random() < 0.95
-          ? `${dateStr(day)} ${pad(odchodHH)}:${pad(randInt(0, 59))}:${pad(randInt(0, 59))}`
-          : null;
-
-      rows.push([dochId++, prichod, odchod, pick(typyZaznamu), emp]);
+      const hh      = randInt(6, 9);
+      const prichod = `${dateStr(day)} ${pad(hh)}:${pad(randInt(0, 59))}:${pad(randInt(0, 59))}`;
+      const odchod  = `${dateStr(day)} ${pad(hh + randInt(8, 10))}:${pad(randInt(0, 59))}:${pad(randInt(0, 59))}`;
+      rows.push([prichod, odchod, pick(typyZaznamu), zamIds[emp]]);
     }
     if (rows.length >= 35000) break;
   }
 
-  // Pad if needed (weekends may have reduced count)
+  // Doplnění do 35000 pokud víkendy snížily počet
   let extraDay = 700;
-  let extraEmp = 1;
+  let extraIdx = 0;
   while (rows.length < 35000) {
     extraDay++;
     const day = new Date(startDate);
     day.setDate(day.getDate() + extraDay);
     if (day.getDay() === 0 || day.getDay() === 6) continue;
-
-    const hh = randInt(6, 9);
-    const mm = randInt(0, 59);
-    const ss = randInt(0, 59);
-    const prichod = `${dateStr(day)} ${pad(hh)}:${pad(mm)}:${pad(ss)}`;
-    const odchodHH = hh + randInt(8, 10);
-    const odchod = `${dateStr(day)} ${pad(odchodHH)}:${pad(randInt(0, 59))}:${pad(randInt(0, 59))}`;
-    rows.push([dochId++, prichod, odchod, pick(typyZaznamu), extraEmp]);
-    extraEmp = (extraEmp % 50) + 1;
+    const hh      = randInt(6, 9);
+    const prichod = `${dateStr(day)} ${pad(hh)}:${pad(randInt(0, 59))}:${pad(randInt(0, 59))}`;
+    const odchod  = `${dateStr(day)} ${pad(hh + randInt(8, 10))}:${pad(randInt(0, 59))}:${pad(randInt(0, 59))}`;
+    rows.push([prichod, odchod, pick(typyZaznamu), zamIds[extraIdx % zamIds.length]]);
+    extraIdx++;
   }
 
-  // Batch insert
   for (let i = 0; i < rows.length; i += BATCH) {
-    const batch = rows.slice(i, i + BATCH);
-    const values = [];
+    const batch  = rows.slice(i, i + BATCH);
+    const vals   = [];
     const params = [];
     let idx = 1;
     for (const row of batch) {
-      values.push(`($${idx},$${idx + 1},$${idx + 2},$${idx + 3},$${idx + 4})`);
+      vals.push(`($${idx},$${idx + 1},$${idx + 2},$${idx + 3})`);
       params.push(...row);
-      idx += 5;
+      idx += 4;
     }
     await client.query(
-      `INSERT INTO "ZaznamDochazky" ("id_dochazka","cas_prichodu","cas_odchodu","typ_zaznamu","id_zamestnanec") VALUES ${values.join(",")}`,
-      params,
+      `INSERT INTO "ZaznamDochazky" ("cas_prichodu","cas_odchodu","typ_zaznamu","id_zamestnanec") VALUES ${vals.join(",")}`,
+      params
     );
-    if ((i / BATCH) % 5 === 0) {
-      process.stdout.write(`  ${i + batch.length} / 35000\r`);
-    }
+    if ((i / BATCH) % 5 === 0) process.stdout.write(`  ${i + batch.length} / 35000\r`);
   }
   console.log("\nZaznamDochazky: 35000");
 
@@ -384,16 +270,15 @@ async function seed() {
   const ucastSet = new Set();
   let ucastCount = 0;
   while (ucastCount < 40) {
-    const idZ = randInt(1, 50);
-    const idP = randInt(1, 15);
+    const idZ = pick(zamIds);
+    const idP = pick(projektyIds);
     const key = `${idZ}-${idP}`;
     if (ucastSet.has(key)) continue;
     ucastSet.add(key);
-    await client.query(`INSERT INTO "UcastniSe" VALUES ($1,$2,$3)`, [
-      pick(roleNaProjektu),
-      idZ,
-      idP,
-    ]);
+    await client.query(
+      `INSERT INTO "UcastniSe" ("role","id_zamestnanec","id_projekt") VALUES ($1,$2,$3)`,
+      [pick(roleNaProjektu), idZ, idP]
+    );
     ucastCount++;
   }
   console.log("UcastniSe: 40");
