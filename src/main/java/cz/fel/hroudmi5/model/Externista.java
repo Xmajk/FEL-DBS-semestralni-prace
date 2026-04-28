@@ -9,14 +9,13 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "Externista")
+@PrimaryKeyJoinColumn(name = "id_zamestnanec")
 @Getter
 @Setter
-@ToString
-public class Externista {
+@ToString(callSuper = true)
+public class Externista extends Zamestnanec {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_externista")
+    @Column(name = "id_externista", insertable = false, updatable = false)
     private Integer idExternista;
 
     @Column(name = "nazev_agentury", nullable = false)
@@ -24,9 +23,4 @@ public class Externista {
 
     @Column(name = "konec_smlouvy", nullable = false)
     private LocalDate konecSmlouvy;
-
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_zamestnanec", nullable = false, unique = true)
-    @ToString.Exclude
-    private Zamestnanec zamestnanec;
 }

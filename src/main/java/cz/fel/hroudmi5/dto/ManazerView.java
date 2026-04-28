@@ -14,8 +14,8 @@ public record ManazerView(
         return new ManazerView(
                 m.getIdManazer(),
                 m.getUrovenPravomoci(),
-                m.getZamestnanec().getIdZamestnanec(),
-                m.getZamestnanec().getCeleJmeno(),
+                m.getIdZamestnanec(),
+                m.getCeleJmeno(),
                 m.getOddeleni().getIdOddeleni(),
                 m.getOddeleni().getNazev()
         );

@@ -72,13 +72,20 @@ public class ManazerService {
         // flush kvůli unique_oddeleni — jinak by INSERT spadl při kolizi v perzistentním kontextu
         em.flush();
 
-        Manazer novyManazer = new Manazer();
-        novyManazer.setOddeleni(oddeleni);
-        novyManazer.setZamestnanec(novy);
-        novyManazer.setUrovenPravomoci(
-                dto.getUrovenPravomoci() != null ? dto.getUrovenPravomoci() : 1);
-        manazerRepository.save(novyManazer);
+        // persist(new Manazer()) by vytvořil nového zaměstnance; tady povyšujeme stávajícího
+        em.createNativeQuery("""
+                INSERT INTO "Manazer" (id_zamestnanec, uroven_pravomoci)
+                VALUES (:idZ, :uroven)
+                """)
+          .setParameter("idZ",    novy.getIdZamestnanec())
+          .setParameter("uroven", dto.getUrovenPravomoci() != null ? dto.getUrovenPravomoci() : 1)
+          .executeUpdate();
 
+        // novy je v PC jako Zamestnanec — clear zajistí, že em.find vrátí Manazer
+        em.flush();
+        em.clear();
+
+        Manazer novyManazer = em.find(Manazer.class, novy.getIdZamestnanec());
         return ManazerView.from(novyManazer);
     }
 }

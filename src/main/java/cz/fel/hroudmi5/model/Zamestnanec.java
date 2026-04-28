@@ -11,15 +11,29 @@ import java.util.List;
 
 @Entity
 @Table(name = "Zamestnanec")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class Zamestnanec extends Osoba {
+public class Zamestnanec {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_zamestnanec")
     private Integer idZamestnanec;
+
+    @Column(name = "jmeno", nullable = false, length = 100)
+    private String jmeno;
+
+    @Column(name = "prijmeni", nullable = false, length = 100)
+    private String prijmeni;
+
+    @Column(name = "email", nullable = false, length = 100, unique = true)
+    private String email;
+
+    public String getCeleJmeno() {
+        return jmeno + " " + prijmeni;
+    }
 
     @Column(name = "rodne_cislo", nullable = false, length = 11, unique = true)
     private String rodneCislo;
