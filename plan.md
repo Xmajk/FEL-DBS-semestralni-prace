@@ -1,66 +1,178 @@
-# Plán oprav Java aplikace (CP-5)
+# Plán: @Inheritance(JOINED) pro Manazer / Externista → Zamestnanec
 
-## Kořenová příčina výjimek
+## Zvolená strategie
 
-`spring.jpa.open-in-view=false` — Hibernate session se uzavře hned po návratu ze servisní
-metody. Servisní metody vracely entity (`Zamestnanec`, `Manazer`, …) s neinicializovanými
-lazy proxy asociacemi. Kontrolery pak volaly `View::from(entity)` **mimo transakci**, čímž
-přístup na proxy (např. `z.getOddeleni().getNazev()`) vyhodil `LazyInitializationException`.
+JPA `@Inheritance(strategy = InheritanceType.JOINED)` + původní DDL beze změny.
 
-## Řešení
+Proč to funguje i bez úpravy DDL:
+- `@PrimaryKeyJoinColumn(name = "id_zamestnanec")` říká Hibernate, ať pro JOIN používá
+  sloupec `id_zamestnanec` (má UNIQUE constraint → chová se jako alternativní klíč).
+- `id_manazer` / `id_externista` jsou `SERIAL` → mají DEFAULT (nextval). Pokud je JPA
+  do INSERT nezahrne (`insertable = false`), PostgreSQL je doplní automaticky.
+- Hibernate generuje SQL dotazy čistě podle JPA mapování, na skutečný DB PK se neptá.
 
-Přesunout mapování entity → DTO **dovnitř** `@Transactional` servisních metod.
-Session je v tu chvíli stále otevřená, lazy loading proběhne bez problémů.
+Výsledná hierarchie:
+```
+Osoba (@MappedSuperclass)        jmeno, prijmeni, email, getCeleJmeno()
+  └── Zamestnanec (@Entity)      id_zamestnanec (PK SERIAL)
+         ├── Manazer (@Entity)   @PrimaryKeyJoinColumn("id_zamestnanec"), id_manazer read-only
+         └── Externista (@Entity) @PrimaryKeyJoinColumn("id_zamestnanec"), id_externista read-only
+```
 
-## Přehled změn
+---
 
-### 1. Servisní vrstva — návratové typy entity → DTO
+## 1. DDL — beze změny
 
-| Třída | Metoda | Před | Po |
-|-------|--------|------|----|
-| `ZamestnanecService` | `najdi` | `Zamestnanec` | `ZamestnanecView` |
-| `ZamestnanecService` | `vytvor` | `Zamestnanec` | `ZamestnanecView` |
-| `ZamestnanecService` | `prevedNaOddeleni` | `Zamestnanec` | `ZamestnanecView` |
-| `ZamestnanecService` | `hledejDleJmena` | `List<Zamestnanec>` | `List<ZamestnanecView>` |
-| `ZamestnanecService` | `nastoupeniPo` | `List<Zamestnanec>` | `List<ZamestnanecView>` |
-| `DochazkaService` | `proZamestnance` | `List<ZaznamDochazky>` | `List<DochazkaView>` |
-| `DochazkaService` | `prichod` | `ZaznamDochazky` | `DochazkaView` |
-| `DochazkaService` | `odchod` | `ZaznamDochazky` | `DochazkaView` |
-| `ProjektService` | `vsechny` | `List<Projekt>` | `List<ProjektView>` |
-| `ProjektService` | `priradZamestnance` | `UcastniSe` | `UcastView` |
-| `ProjektService` | `clenoveProjektu` | `List<UcastniSe>` | `List<UcastView>` |
-| `ManazerService` | `vsichni` | `List<Manazer>` | `List<ManazerView>` |
-| `ManazerService` | `vymenManazera` | `Manazer` | `ManazerView` |
-| `OddeleniService` | `vsechna` | `List<Oddeleni>` | `List<OddeleniView>` |
+`docs/cp3/DDL.sql` zůstává jako je. Soubor `docs/cp4/newDDL.sql` není potřeba.
 
-### 2. Kontrolery — odstranit duplicitní mapování
+---
 
-Metody jako `service.vsichni().stream().map(View::from).toList()` → `service.vsichni()`.
+## 2. `Zamestnanec.java`
 
-### 3. Přidat endpoint `/api/pozice` (nové soubory)
+Přidat jedinou anotaci — JOINED nevyžaduje diskriminační sloupec:
 
-Formulář pro vytvoření zaměstnance plnil select pozic prázdným `[]` (hack přes `/api/projekty`).
-Přidat:
-- `PoziceView.java` (DTO record)
-- `PoziceService.java`
-- `PoziceController.java` → `GET /api/pozice`
+```java
+@Inheritance(strategy = InheritanceType.JOINED)
+```
 
-### 4. Opravit `zamestnanci.js`
+---
 
-Načítat pozice z `/api/pozice` místo `fetch('/api/projekty').then(() => [])`.
+## 3. `Manazer.java` — přepis
 
-## Požadavky CP-5 (kontrolní seznam)
+```java
+@Entity
+@Table(name = "Manazer")
+@PrimaryKeyJoinColumn(name = "id_zamestnanec")
+@Getter @Setter @ToString(callSuper = true)
+public class Manazer extends Zamestnanec {
 
-- [x] **Datový model** — pokrývá celou databázi (Oddeleni, Pozice, Projekt, Zamestnanec,
-      Telefon, Adresa, Manazer, Externista, ZaznamDochazky, UcastniSe)
-- [x] **Many-to-Many** — `UcastniSe` (`Zamestnanec` ↔ `Projekt`) s atributem `role`,
-      composite PK přes `@EmbeddedId`
-- [x] **Dědičnost** — `Zamestnanec extends Osoba` (`@MappedSuperclass`)
-- [x] **DAO vrstva** — `ZamestnanecDao` s `EntityManager` a parametrizovanými JPQL/nativními dotazy;
-      Spring Data JPA repositories pro všechny entity
-- [x] **Servisní vrstva — 5 užití:**
-  1. `ZamestnanecService.vytvor()` — zápis nového zaměstnance
-  2. `ZamestnanecService.prevedNaOddeleni()` — UPDATE oddělení zaměstnance
-  3. `DochazkaService.prichod()` + `odchod()` — zápis příchodu/odchodu
-  4. `ProjektService.priradZamestnance()` — zápis do M:N vazby
-  5. `ManazerService.vymenManazera()` — transakce z CP-4 (SERIALIZABLE, DELETE + INSERT)
+    // DB generuje hodnotu z SERIAL sekvence; JPA nesmí sloupec zapisovat
+    @Column(name = "id_manazer", insertable = false, updatable = false)
+    private Integer idManazer;
+
+    @Column(name = "uroven_pravomoci", nullable = false)
+    private Integer urovenPravomoci;
+
+    // id_oddeleni zděděno z Zamestnanec přes getOddeleni()
+}
+```
+
+Odstraněna pole: `zamestnanec` (Manazer IS Zamestnanec), `oddeleni` (zděděno).
+
+---
+
+## 4. `Externista.java` — přepis
+
+```java
+@Entity
+@Table(name = "Externista")
+@PrimaryKeyJoinColumn(name = "id_zamestnanec")
+@Getter @Setter @ToString(callSuper = true)
+public class Externista extends Zamestnanec {
+
+    // DB generuje hodnotu z SERIAL sekvence; JPA nesmí sloupec zapisovat
+    @Column(name = "id_externista", insertable = false, updatable = false)
+    private Integer idExternista;
+
+    @Column(name = "nazev_agentury", nullable = false)
+    private String nazevAgentury;
+
+    @Column(name = "konec_smlouvy", nullable = false)
+    private LocalDate konecSmlouvy;
+
+    // zamestnanec zrušeno — Externista IS Zamestnanec
+}
+```
+
+---
+
+## 5. Repozitáře — beze změny typů
+
+`ManazerRepository extends JpaRepository<Manazer, Integer>` — PK je stále Integer
+(teď `id_zamestnanec`, ne `id_manazer`, ale typ se nemění).
+
+`findByOddeleni_IdOddeleni` funguje — `oddeleni` je zděděno z `Zamestnanec`.
+
+`deleteByOddeleni` JPQL bulk delete (`DELETE FROM Manazer WHERE ...`) s JOINED odstraní
+pouze řádek z tabulky `Manazer`; `Zamestnanec` řádek přežije → degradace na řadového zaměstnance.
+
+---
+
+## 6. `ManazerView.java`
+
+`m.getZamestnanec()` → přímé `m.getCeleJmeno()`, `m.getOddeleni()` (zděděné metody):
+
+```java
+public record ManazerView(
+        Integer idManazer,
+        Integer urovenPravomoci,
+        Integer idZamestnanec,
+        String jmenoZamestnance,
+        Integer idOddeleni,
+        String nazevOddeleni
+) {
+    public static ManazerView from(Manazer m) {
+        return new ManazerView(
+                m.getIdManazer(),
+                m.getUrovenPravomoci(),
+                m.getIdZamestnanec(),
+                m.getCeleJmeno(),
+                m.getOddeleni().getIdOddeleni(),
+                m.getOddeleni().getNazev()
+        );
+    }
+}
+```
+
+---
+
+## 7. `ManazerService.vymenManazera`
+
+Klíčový problém: `new Manazer()` + `em.persist()` = INSERT do obou tabulek
+(`Zamestnanec` + `Manazer`) → vytvořil by nového zaměstnance, ne povýšil stávajícího.
+
+Řešení: native INSERT pouze do tabulky `Manazer` pro existující `id_zamestnanec`:
+
+```java
+manazerRepository.deleteByOddeleni(oddeleni.getIdOddeleni());
+em.flush(); // nutné kvůli unique_oddeleni
+
+em.createNativeQuery("""
+    INSERT INTO "Manazer" (id_zamestnanec, uroven_pravomoci)
+    VALUES (:idZ, :uroven)
+    """)
+  .setParameter("idZ",    novy.getIdZamestnanec())
+  .setParameter("uroven", urovenPravomoci)
+  .executeUpdate();
+em.flush();
+
+Manazer novyManazer = em.find(Manazer.class, novy.getIdZamestnanec());
+return ManazerView.from(novyManazer);
+```
+
+Native INSERT je zde odůvodnitelný: JPQL INSERT neexistuje a `em.persist(new Manazer())`
+by insertoval nového zaměstnance, ne povýšil stávajícího.
+
+---
+
+## 8. Polymorfní dotazy — vedlejší efekt
+
+`ZamestnanecRepository.findAll()` s JOINED vrátí instance správných typů:
+manažeři jako `Manazer`, externisté jako `Externista`, ostatní jako `Zamestnanec`.
+`ZamestnanecView.from(z)` to zvládne — pracuje jen s atributy z `Osoba`/`Zamestnanec`.
+
+Pro dotaz pouze na řadové zaměstnance (bez podtříd):
+```java
+@Query("SELECT z FROM Zamestnanec z WHERE TYPE(z) = Zamestnanec")
+```
+
+---
+
+## 9. Pořadí implementace
+
+1. `Zamestnanec.java` — přidat `@Inheritance(JOINED)`
+2. `Manazer.java` — přepsat jako `extends Zamestnanec`
+3. `Externista.java` — přepsat jako `extends Zamestnanec`
+4. `ManazerView.java` — opravit factory `from()`
+5. `ManazerService.vymenManazera` — nahradit `new Manazer()` native INSERTem
+6. Kompilace + test (`./start.sh`, menu volby 5, 9, 10)
