@@ -2,6 +2,7 @@ package cz.fel.hroudmi5;
 
 import cz.fel.hroudmi5.dto.*;
 import cz.fel.hroudmi5.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,25 +14,18 @@ import java.util.Scanner;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-    private final ZamestnanecService zamestnanecService;
-    private final DochazkaService dochazkaService;
-    private final ProjektService projektService;
-    private final ManazerService manazerService;
-    private final OddeleniService oddeleniService;
+    @Autowired
+    private ZamestnanecService zamestnanecService;
+    @Autowired
+    private DochazkaService dochazkaService;
+    @Autowired
+    private ProjektService projektService;
+    @Autowired
+    private ManazerService manazerService;
+    @Autowired
+    private OddeleniService oddeleniService;
 
     private final Scanner sc = new Scanner(System.in);
-
-    public Application(ZamestnanecService zamestnanecService,
-                       DochazkaService dochazkaService,
-                       ProjektService projektService,
-                       ManazerService manazerService,
-                       OddeleniService oddeleniService) {
-        this.zamestnanecService = zamestnanecService;
-        this.dochazkaService = dochazkaService;
-        this.projektService = projektService;
-        this.manazerService = manazerService;
-        this.oddeleniService = oddeleniService;
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
